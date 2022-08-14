@@ -111,21 +111,17 @@ exports.getPostOfFollowing = async (req, res) => {
   try {
     const user = await User.findById(req.user._id);
 
-    const posts = await Post.find({ owner: { $in: user.following } });
+    let { page = 1, size = 10 } = req.query;
 
-    postss = [];
+    const limit = parseInt(size);
+    const skip = (page - 1) * limit;
 
-    posts.forEach((post) => {
-      postss.push({
-        caption: post.caption,
-        image: post.image,
-        comments: post.comments,
-      });
-    });
+    const posts = await Post.find({ owner: { $in: user.following } })
+      .limit(limit)
+      .skip(skip);
 
     res.status(200).json({
-      success: true,
-      postss,
+      posts,
     });
   } catch (err) {
     res.status(500).json({ success: false, message: err.message });
@@ -263,20 +259,14 @@ exports.getmylikedposts = async (req, res) => {
   try {
     const user = await User.findById(req.user._id);
 
-    const postss = await Post.find({ _id: { $in: user.likes } });
+    let { page = 1, size = 10 } = req.query;
 
-    posts = [];
+    const limit = parseInt(size);
+    const skip = (page - 1) * limit;
 
-    postss.forEach((post) => {
-      if (post.owner.toString() !== req.user._id.toString()) {
-        posts.push({
-          id: post._id,
-          caption: post.caption,
-          image: post.image,
-          comments: post.comments,
-        });
-      }
-    });
+    const posts = await Post.find({ _id: { $in: user.likes } })
+      .limit(limit)
+      .skip(skip);
 
     res.status(200).json({
       posts,
