@@ -47,16 +47,3 @@ exports.followUser = async (req, res) => {
     res.status(500).json({ success: false, message: err.message });
   }
 };
-
-exports.getposts = async (req, res) => {
-  try {
-    const user = await User.findById(req.user._id);
-
-    res.status(200).json({
-      success: true,
-      user,
-    });
-  } catch (err) {
-    res.status(500).json({ success: false, message: err.message });
-  }
-};

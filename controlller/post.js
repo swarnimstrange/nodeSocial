@@ -81,7 +81,12 @@ exports.likeAndUnlikePost = async (req, res) => {
     if (post.likes.includes(req.user._id)) {
       const index = post.likes.indexOf(req.user._id);
       post.likes.splice(index, 1);
+
+      const indexofPost = req.user.likes.indexOf(req.params.id);
+      req.user.likes.splice(indexofPost, 1);
+
       await post.save();
+      await req.user.save();
 
       return res.status(200).json({
         success: true,
@@ -89,7 +94,9 @@ exports.likeAndUnlikePost = async (req, res) => {
       });
     } else {
       post.likes.push(req.user._id);
+      req.user.likes.push(req.params.id);
       await post.save();
+      await req.user.save();
       return res.status(200).json({
         success: true,
         message: "Post liked",
@@ -247,6 +254,60 @@ exports.deleteComment = async (req, res) => {
         message: "Your Comment deleted",
       });
     }
+  } catch (err) {
+    res.status(500).json({ success: false, message: err.message });
+  }
+};
+
+exports.getmylikedposts = async (req, res) => {
+  try {
+    const user = await User.findById(req.user._id);
+
+    const postss = await Post.find({ _id: { $in: user.likes } });
+
+    posts = [];
+
+    postss.forEach((post) => {
+      if (post.owner.toString() !== req.user._id.toString()) {
+        posts.push({
+          id: post._id,
+          caption: post.caption,
+          image: post.image,
+          comments: post.comments,
+        });
+      }
+    });
+
+    res.status(200).json({
+      posts,
+    });
+  } catch (err) {
+    res.status(500).json({ success: false, message: err.message });
+  }
+};
+
+exports.getPeopleWhoLiked = async (req, res) => {
+  try {
+    const post = await Post.findById(req.params.id);
+    if (!post) {
+      return res
+        .status(404)
+        .json({ success: false, message: "Post does not exist" });
+    }
+    const userss = await User.find({ _id: { $in: post.likes } });
+
+    users = [];
+
+    userss.forEach((user) => {
+      users.push({
+        id: user._id,
+        name: user.name,
+      });
+    });
+
+    res.status(200).json({
+      users,
+    });
   } catch (err) {
     res.status(500).json({ success: false, message: err.message });
   }
