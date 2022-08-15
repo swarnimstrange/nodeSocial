@@ -5,7 +5,7 @@
 
 <h2>All tasks and routes</h2>
 <ul>
-Mandatory Tasks
+<h3>Mandatory Tasks</h3>
 <li> Register [path]-> https://nodejs-sapi.herokuapp.com/api/user/register </li>
 <li> Login [path]-> https://nodejs-sapi.herokuapp.com/api/user/login </li>
 <li> Logout [path]-> https://nodejs-sapi.herokuapp.com/api/user/logout </li>
@@ -25,7 +25,7 @@ for example name, username, email, gender, post count, follower count, following
 </ul>
 
 <ul>
-Bonus Tasks
+<h3>Bonus Tasks</h3>
 <li> Comment on post [path] -> https://nodejs-sapi.herokuapp.com/api/post/comment/:postId </li>
 <li> Delete comment on post [path] -> https://nodejs-sapi.herokuapp.com/api/post/comment/:postId </li>
 </ul>
